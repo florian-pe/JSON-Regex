@@ -1,4 +1,3 @@
-
 package JSON::Regex;
 use strict;
 use warnings;
@@ -120,14 +119,14 @@ sub make_regex {
     for (qw(true false null number string)) {
         if (!defined $args{$_}) {
         }
-        elsif ($args{$_} eq "string") {
+        elsif ($args{$_} eq "raw") {
         }
         elsif ($args{$_} eq "object") {
 
             if ($_ eq "number" || $_ eq "string") {
+
                 $opt{$_} = <<END;
 (?{
-    
     \$stack[\$sp] = do { my \$o = \$^N; bless \\\$o, "JSON::Regex::$_" };
     local \$sp = \$sp+1;
 })
@@ -185,28 +184,16 @@ END
 END
             next;
         }
-
-        # default
-        $opt{$_} = <<'END';
-(?{
-    $stack[$sp] = $^N;
-    local $sp = $sp+1;
-})
-END
-
-    }
-
-    if (defined $args{number} && $args{number} eq "number") {
-        $opt{number} = <<'END';
+        elsif (defined $args{number} && $args{number} eq "numify") {
+            $opt{number} = <<'END';
 (?{
     $stack[$sp] = 0+$^N;
     local $sp = $sp+1;
 })
 END
-    }
-
-    if (defined $args{string} && $args{string} eq "interpolate") {
-        $opt{string} = <<'END';
+        }
+        elsif (defined $args{string} && $args{string} eq "interpolate") {
+            $opt{string} = <<'END';
 (?{
     $stack[$sp] = $^N
     =~ s/\\b/\b/gr
@@ -217,6 +204,19 @@ END
     local $sp = $sp+1;
 })
 END
+        }
+        else {
+            croak "parameter '$_': unrecognized value '$args{$_}'"
+        }
+
+        # default
+        $opt{$_} = <<'END';
+(?{
+    $stack[$sp] = $^N;
+    local $sp = $sp+1;
+})
+END
+
     }
 
     my $object_init;
@@ -298,7 +298,7 @@ END
 sub json_regex_parser {
     my $ref = shift;
     if (!defined $ref || ref $ref ne "SCALAR") {
-        croak "JSON::Regex::json_regex() argument is not a SCALAR reference"
+        croak "JSON::Regex::json_regex_parser() argument is not a SCALAR reference"
     }
 
     make_regex($ref, @_);
@@ -307,5 +307,4 @@ sub json_regex_parser {
 
 
 1;
-
 
