@@ -46,21 +46,18 @@ The different options
 The following shows the different parameters and their possible values.
 
 - true, false, null
-    - undef (same as "raw")
-    - "raw"
+    - "raw" (default)
     - "object"
     - CODE ref
     - inlined code string
 - number
-    - undef (same as "raw")
-    - "raw"
+    - "raw" (default)
     - "object"
     - CODE ref
     - inlined code string
     - "numify"
 - string
-    - undef (same as "raw")
-    - "raw"
+    - "raw" (default)
     - "object"
     - CODE ref
     - inlined code string
@@ -68,5 +65,4 @@ The following shows the different parameters and their possible values.
 - object
     - undef (use a regular perl hash)
     - "ordered"
-
 
