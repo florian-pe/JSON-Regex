@@ -108,6 +108,12 @@ sub indent {
     $string =~ s/^/$indent/mgr
 }
 
+sub heredoc {
+    my ($level, $string) = @_;
+    my $indent = " " x (4 * $level);
+    $string =~ s/^\n//r =~ s/^$indent//gmr
+}
+
 our @stack;
 our $sp;
 
@@ -122,45 +128,45 @@ sub make_regex {
         }
         elsif ($args{$_} eq "raw") { # default
 
-            $opt{$_} = <<'END';
-(?{
-    $stack[$sp] = $^N;
-    local $sp = $sp+1;
-})
-END
+            $opt{$_} = heredoc 3, q{
+            (?{
+                $stack[$sp] = $^N;
+                local $sp = $sp+1;
+            })
+            };
         }
         elsif ($args{$_} eq "object") {
 
             if ($_ eq "number" || $_ eq "string") {
 
-                $opt{$_} = <<END;
-(?{
-    \$stack[\$sp] = do { my \$o = \$^N; bless \\\$o, "JSON::Regex::$_" };
-    local \$sp = \$sp+1;
-})
-END
+                $opt{$_} = heredoc 4, qq{
+                (?{
+                    \$stack[\$sp] = do { my \$o = \$^N; bless \\\$o, "JSON::Regex::$_" };
+                    local \$sp = \$sp+1;
+                })
+                };
             }
             else {
-                $opt{$_} = <<END;
-(?{
-    \$stack[\$sp] = do { my \$o; bless \\\$o, "JSON::Regex::$_" };
-    local \$sp = \$sp+1;
-})
-END
+                $opt{$_} = heredoc 4, qq{
+                (?{
+                    \$stack[\$sp] = do { my \$o; bless \\\$o, "JSON::Regex::$_" };
+                    local \$sp = \$sp+1;
+                })
+                };
             }
         }
         elsif ($args{$_} =~ /^\s*CODE\s*:/) {
             
             my $code = indent(2, $args{$_} =~ s/^\s*CODE\s*://r);
 
-            $opt{$_} = <<END;
-(?{
-    \$stack[\$sp] = do {
-$code
-    };
-    local \$sp = \$sp+1;
-})
-END
+            $opt{$_} = heredoc 3, qq{
+            (?{
+                \$stack[\$sp] = do {
+            $code
+                };
+                local \$sp = \$sp+1;
+            })
+            };
         }
         elsif (ref $args{$_} eq "CODE") {
 
@@ -180,35 +186,35 @@ END
                 $null_action = $args{$_};
             }
 
-            $opt{$_} = <<END;
-(?{
-    \$stack[\$sp] = \$${_}_action->(\$^N);
-    local \$sp = \$sp+1;
-})
-END
+            $opt{$_} = heredoc 3, qq{
+            (?{
+                \$stack[\$sp] = \$${_}_action->(\$^N);
+                local \$sp = \$sp+1;
+            })
+            };
         }
         elsif ($_ eq "number" && $args{number} eq "numify") {
 
-            $opt{number} = <<'END';
-(?{
-    $stack[$sp] = 0+$^N;
-    local $sp = $sp+1;
-})
-END
+            $opt{number} = heredoc 3, q{
+            (?{
+                $stack[$sp] = 0+$^N;
+                local $sp = $sp+1;
+            })
+            };
         }
         elsif ($_ eq "string" && $args{string} eq "interpolate") {
 
-            $opt{string} = <<'END';
-(?{
-    $stack[$sp] = $^N
-    =~ s/\\b/\b/gr
-    =~ s/\\f/\f/gr
-    =~ s/\\n/\n/gr
-    =~ s/\\r/\r/gr
-    =~ s/\\t/\t/gr;
-    local $sp = $sp+1;
-})
-END
+            $opt{string} = heredoc 3, q{
+            (?{
+                $stack[$sp] = $^N
+                =~ s/\\b/\b/gr
+                =~ s/\\f/\f/gr
+                =~ s/\\n/\n/gr
+                =~ s/\\r/\r/gr
+                =~ s/\\t/\t/gr;
+                local $sp = $sp+1;
+            })
+            };
         }
         else {
             croak "parameter '$_': unrecognized value '$args{$_}'"
@@ -226,27 +232,27 @@ END
         $object_init = q/(?{ $stack[$sp] = {}; local $sp = $sp+1; })/;
     }
 
-    my $array_value_action = <<'END';
-(?{
-    push $stack[$sp-2]->@*,
-    $stack[$sp-1];
-    local $sp = $sp-1;
-})
-END
+    my $array_value_action = heredoc 1, q{
+    (?{
+        push $stack[$sp-2]->@*,
+        $stack[$sp-1];
+        local $sp = $sp-1;
+    })
+    };
 
-    my $object_string_action = <<'END';
-(?{
-    $stack[$sp] = $^N;
-    local $sp = $sp+1;
-})
-END
+    my $object_string_action = heredoc 1, q{
+    (?{
+        $stack[$sp] = $^N;
+        local $sp = $sp+1;
+    })
+    };
 
-    my $object_value_action = <<'END';
-(?{
-    $stack[$sp-3]->{$stack[$sp-2]} = $stack[$sp-1];
-    local $sp = $sp-2;
-})
-END
+    my $object_value_action = heredoc 1, q{
+    (?{
+        $stack[$sp-3]->{$stack[$sp-2]} = $stack[$sp-1];
+        local $sp = $sp-2;
+    })
+    };
 
     my $regex =
     q{
