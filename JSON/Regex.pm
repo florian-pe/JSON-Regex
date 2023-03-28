@@ -118,8 +118,16 @@ sub make_regex {
 
     for (qw(true false null number string)) {
         if (!defined $args{$_}) {
+            croak "parameter '$_': undefined value"
         }
-        elsif ($args{$_} eq "raw") {
+        elsif ($args{$_} eq "raw") { # default
+
+            $opt{$_} = <<'END';
+(?{
+    $stack[$sp] = $^N;
+    local $sp = $sp+1;
+})
+END
         }
         elsif ($args{$_} eq "object") {
 
@@ -140,8 +148,6 @@ END
 })
 END
             }
-
-            next;
         }
         elsif ($args{$_} =~ /^\s*CODE\s*:/) {
             
@@ -155,8 +161,6 @@ $code
     local \$sp = \$sp+1;
 })
 END
-
-            next;
         }
         elsif (ref $args{$_} eq "CODE") {
 
@@ -182,18 +186,18 @@ END
     local \$sp = \$sp+1;
 })
 END
-            next;
         }
         elsif ($_ eq "number" && $args{number} eq "numify") {
+
             $opt{number} = <<'END';
 (?{
     $stack[$sp] = 0+$^N;
     local $sp = $sp+1;
 })
 END
-            next;
         }
         elsif ($_ eq "string" && $args{string} eq "interpolate") {
+
             $opt{string} = <<'END';
 (?{
     $stack[$sp] = $^N
@@ -205,20 +209,10 @@ END
     local $sp = $sp+1;
 })
 END
-            next;
         }
         else {
             croak "parameter '$_': unrecognized value '$args{$_}'"
         }
-
-        # default
-        $opt{$_} = <<'END';
-(?{
-    $stack[$sp] = $^N;
-    local $sp = $sp+1;
-})
-END
-
     }
 
     my $object_init;
@@ -303,7 +297,14 @@ sub json_regex_parser {
         croak "JSON::Regex::json_regex_parser() argument is not a SCALAR reference"
     }
 
-    make_regex($ref, @_);
+    make_regex($ref,
+        true    => "raw",
+        false   => "raw",
+        null    => "raw",
+        number  => "raw",
+        string  => "raw",
+        @_
+    );
 }
 
 
