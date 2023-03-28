@@ -111,7 +111,7 @@ sub indent {
 sub heredoc {
     my ($level, $string) = @_;
     my $indent = " " x (4 * $level);
-    $string =~ s/^\n//r =~ s/^$indent//gmr
+    $string =~ s/^$indent//mgr
 }
 
 our @stack;
@@ -275,23 +275,25 @@ sub make_regex {
     .
     $json_base_regex
     =~ s/VALUE_STRING_PATTERN/"((?&json_string))"/r
-    =~ s/VALUE_STRING_ACTION/"\n" . indent(4, $opt{string})/re
+    =~ s/VALUE_STRING_ACTION/ indent(4, $opt{string})/re
+
     =~ s/VALUE_NUMBER_PATTERN/((?&json_number))/r
-    =~ s/VALUE_NUMBER_ACTION/"\n" . indent(4, $opt{number})/re
-    =~ s/VALUE_TRUE_ACTION/  "\n" . indent(4, $opt{true})  /re
-    =~ s/VALUE_FALSE_ACTION/ "\n" . indent(4, $opt{false}) /re
-    =~ s/VALUE_NULL_ACTION/  "\n" . indent(4, $opt{null})  /re
+    =~ s/VALUE_NUMBER_ACTION/ indent(4, $opt{number})/re
+
+    =~ s/VALUE_TRUE_ACTION/   indent(4, $opt{true})  /re
+    =~ s/VALUE_FALSE_ACTION/  indent(4, $opt{false}) /re
+    =~ s/VALUE_NULL_ACTION/   indent(4, $opt{null})  /re
 
     =~ s/ARRAY_INIT/(?{ \$stack[\$sp] = []; local \$sp = \$sp+1; })/r
-    =~ s/ARRAY_VALUE_ACTION/"\n" . indent(4, $array_value_action)/re
-    =~ s/ARRAY_VALUE_ACTION/"\n" . indent(5, $array_value_action)/re
+    =~ s/ARRAY_VALUE_ACTION/ indent(4, $array_value_action)/re
+    =~ s/ARRAY_VALUE_ACTION/ indent(5, $array_value_action)/re
 
     =~ s/OBJECT_INIT/$object_init/r
     =~ s/OBJECT_STRING_PATTERN/"((?&json_string))"/gr
-    =~ s/OBJECT_STRING_ACTION/"\n" . indent(4, $object_string_action)/re
-    =~ s/OBJECT_STRING_ACTION/"\n" . indent(5, $object_string_action)/re
-    =~ s/OBJECT_VALUE_ACTION/ "\n" . indent(4, $object_value_action) /re
-    =~ s/OBJECT_VALUE_ACTION/ "\n" . indent(5, $object_value_action) /re
+    =~ s/OBJECT_STRING_ACTION/ indent(4, $object_string_action)/re
+    =~ s/OBJECT_STRING_ACTION/ indent(5, $object_string_action)/re
+    =~ s/OBJECT_VALUE_ACTION/  indent(4, $object_value_action) /re
+    =~ s/OBJECT_VALUE_ACTION/  indent(5, $object_value_action) /re
 ;    
 
     eval q{qr/$regex/x};
