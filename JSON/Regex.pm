@@ -127,8 +127,8 @@ sub make_regex {
             if ($_ eq "number" || $_ eq "string") {
                 $opt{$_} = <<END;
 (?{
-    my \$o = \$^N;
-    \$stack[\$sp] = bless \\\$o, "JSON::Regex::$_";
+    
+    \$stack[\$sp] = do { my \$o = \$^N; bless \\\$o, "JSON::Regex::$_" };
     local \$sp = \$sp+1;
 })
 END
