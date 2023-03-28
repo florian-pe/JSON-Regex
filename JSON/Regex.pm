@@ -184,7 +184,7 @@ END
 END
             next;
         }
-        elsif (defined $args{number} && $args{number} eq "numify") {
+        elsif ($_ eq "number" && $args{number} eq "numify") {
             $opt{number} = <<'END';
 (?{
     $stack[$sp] = 0+$^N;
@@ -193,7 +193,7 @@ END
 END
             next;
         }
-        elsif (defined $args{string} && $args{string} eq "interpolate") {
+        elsif ($_ eq "string" && $args{string} eq "interpolate") {
             $opt{string} = <<'END';
 (?{
     $stack[$sp] = $^N
