@@ -21,21 +21,26 @@ The different options:
 
 - "number"
 
-Numify numbers with `0+`.
+    Numify numbers with `0+`.
 
 - "object"
+
     Store a blessed SCALAR reference with the package name being (JSON::Regex::true/false/null/number/string).
 
 - CODE ref
+    
     Call the specified CODE ref with the raw string value as argument and store the returning value.
 
 - inlined code string
+    
     Same as above except that the code is inlined. The argument is a string containing arbitrary perl code, prefixed with "CODE:". The inlined code will be enclosed in a `do` block. Since this is not a function call, the code will have to obtain the raw value directly from `$^N`.
  
 - interpolate
+    
     Substitute the backslash sequences (`\b`, `\f`, `\n`, `\r`, `\t`) in string values (not object keys) by their corresponding ascii characters.
 
 - "ordered"
+    
     Use `Tie::IxHash` for storing json objects instead of a regular perl hash in order to conserver the order of key/value pairs. This particular option was the main motivation for making this regex JSON parser.
 
 
@@ -64,5 +69,3 @@ The following shows the different parameters and their possible values.
 - object
     - undef (use a regular perl hash)
     - "ordered"
-
-
