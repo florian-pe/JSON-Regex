@@ -20,7 +20,8 @@ The different options:
     Store the raw string of the JSON value. In the case of JSON strings, the double quotes are not included.
 
 - "number"
-    Numify numbers with `0+`.
+
+Numify numbers with `0+`.
 
 - "object"
     Store a blessed SCALAR reference with the package name being (JSON::Regex::true/false/null/number/string).
