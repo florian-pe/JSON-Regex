@@ -191,6 +191,7 @@ END
     local $sp = $sp+1;
 })
 END
+            next;
         }
         elsif (defined $args{string} && $args{string} eq "interpolate") {
             $opt{string} = <<'END';
@@ -204,6 +205,7 @@ END
     local $sp = $sp+1;
 })
 END
+            next;
         }
         else {
             croak "parameter '$_': unrecognized value '$args{$_}'"
@@ -307,4 +309,3 @@ sub json_regex_parser {
 
 
 1;
-
