@@ -14,9 +14,9 @@ This subroutine takes a SCALAR reference as first parameter that will be closed 
 
 The various options can be used to decide what to store when encountering a base value (true, false, null, number, string) in order to differentiate them.
 
-The different options
+The different options:
 - "string"
-    Store the raw string of the JSON value. In the case of JSON strings, the double quotes are not included.
+Store the raw string of the JSON value. In the case of JSON strings, the double quotes are not included.
 
 - "number"
     Numify numbers with `0+`.
