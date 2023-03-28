@@ -51,8 +51,8 @@ my $number_action = sub {
 
 
 # my $json_parser = json_regex_parser(\$json, string => $code);
-# my $json_parser = json_regex_parser(\$json, string => $code, number => "number");
-# my $json_parser = json_regex_parser(\$json, string => "interpolate", number => "number");
+# my $json_parser = json_regex_parser(\$json, string => $code, number => "numify");
+# my $json_parser = json_regex_parser(\$json, string => "interpolate", number => "numify");
 #
 # my $json_parser = json_regex_parser(\$json, string => $string_action, number => $number_action);
 
