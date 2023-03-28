@@ -85,8 +85,10 @@ my $json_base_regex = qr{
 our $definition = $json_base_regex
     =~ s/VALUE_STRING_PATTERN/"(?&json_string)"/r
     =~ s/VALUE_STRING_ACTION//r
+
     =~ s/VALUE_NUMBER_PATTERN/(?&json_number)/r
     =~ s/VALUE_NUMBER_ACTION//r
+
     =~ s/VALUE_TRUE_ACTION//r
     =~ s/VALUE_FALSE_ACTION//r
     =~ s/VALUE_NULL_ACTION//r
@@ -314,7 +316,5 @@ sub json_regex_parser {
         @_
     );
 }
-
-
 
 1;
