@@ -67,12 +67,10 @@ my $json_base_regex = qr{
             
             (?:
                 OBJECT_STRING_PATTERN \s* OBJECT_STRING_ACTION
-                
                 : \s* (?&json_value) \s* OBJECT_VALUE_ACTION
 
                 (?: ,
                     \s* OBJECT_STRING_PATTERN \s* OBJECT_STRING_ACTION
-                
                     : \s* (?&json_value) \s* OBJECT_VALUE_ACTION
                 )*
             )?
@@ -100,7 +98,7 @@ our $definition = $json_base_regex
     =~ s/OBJECT_STRING_PATTERN/"(?&json_string)"/gr
     =~ s/OBJECT_STRING_ACTION//gr
     =~ s/OBJECT_VALUE_ACTION//gr
-;    
+;
 
 our $match = qr{ ((?&json_value)) $JSON::Regex::definition }x;
 
@@ -296,7 +294,7 @@ sub make_regex {
     =~ s/OBJECT_STRING_ACTION/ indent(5, $object_string_action)/re
     =~ s/OBJECT_VALUE_ACTION/  indent(4, $object_value_action) /re
     =~ s/OBJECT_VALUE_ACTION/  indent(5, $object_value_action) /re
-;    
+;
 
     eval q{qr/$regex/x};
 }
