@@ -261,11 +261,7 @@ sub make_regex {
             local $sp = 0;
         })
 
-        ^ \s*
- 
-        (?&json_value)
-
-        \s* $
+        ^ \s* (?&json_value) \s* $
 
         (?{
             $$ref = $stack[0];
