@@ -256,21 +256,21 @@ sub make_regex {
 
     my $regex =
     q{
-        ^ \s*
-
         (?{
             local @stack;
             local $sp = 0;
         })
+
+        ^ \s*
  
         (?&json_value)
+
+        \s* $
 
         (?{
             $$ref = $stack[0];
             @stack = ();
         })
-
-        \s* $
     }
     .
     $json_base_regex
